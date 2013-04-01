@@ -1,3 +1,5 @@
+import java.util.*;
+
 boolean overBox = false;
 int lineWidth = 50;
 int lineHeight = 5;
@@ -5,6 +7,10 @@ float lineX = 100.0;
 float lineY = 100.0;
 String HORIZONTAL = "HORIZONTAL";
 String VERTICAL = "VERTICAL";
+String TOP = "TOP";
+String BOTTOM = "BOTTOM";
+String LEFT = "LEFT";
+String RIGHT = "RIGHT";
 
 DABGame game;
 Player player1;
@@ -21,16 +27,6 @@ void setup() {
 }
 
 void draw() {
-//  if (mouseX > lineX-lineWidth && mouseX < lineX+lineWidth &&
-//    mouseY > lineY-lineHeight && mouseY < lineY+lineHeight) {
-//    overBox = true;
-//    fill(0, 255, 0);
-//    drawLines();
-//  } 
-//  else {
-//    overBox = false;
-//  }
-
   game.play();
 }
 
@@ -72,9 +68,9 @@ class Dot {
 class Board {
   int gridSize;
   Dot[][] grid;
-  Line[] lines;
+  HashMap lines;
   Square[] squares;
-  int dotSize = 20;
+  int dotSize = 10;
   color dotColor = color(0, 0, 0);  
   float yStartPos = 50.0;
   float xStartPos = width/2.8;
@@ -96,9 +92,10 @@ class Board {
   }
   
   void buildSquares() {
-    squares = new Square[1];
-    lines = new Line[4];
-    buildSquare(0);
+    squares = new Square[2];
+    for(int i = 0; i < squares.length; i++) {
+      buildSquare(i);
+    }
 //    squares[1] = buildSquare(2);
 
     //square 2
@@ -109,30 +106,38 @@ class Board {
   }
   
   void buildSquare(int squareNbr) {
+    lines = new HashMap<String,Line>();
     switch (squareNbr) {
       case 0: //square 0
-        lines[0] = new Line(HORIZONTAL, grid[0][0], grid[0][1], color(255,255,255)); 
-        lines[1] = new Line(VERTICAL, grid[0][1], grid[1][1], color(255,255,255));  //shared vertical line
-        lines[2] = new Line(VERTICAL, grid[0][0], grid[1][0], color(255,255,255));
-        lines[3] = new Line(HORIZONTAL, grid[1][0], grid[1][1], color(255,255,255));
-        squares[0] = new Square(lines);
+        lines.put(TOP, new Line(HORIZONTAL, grid[0][0], grid[0][1], color(255,255,255)));
+        lines.put(RIGHT, new Line(VERTICAL, grid[0][1], grid[1][1], color(255,255,255)));
+        lines.put(LEFT, new Line(VERTICAL, grid[0][0], grid[1][0], color(255,255,255)));
+        lines.put(BOTTOM, new Line(HORIZONTAL, grid[1][0], grid[1][1], color(255,255,255)));
+        squares[squareNbr] = new Square(lines);
         break;
       case 1:  //square 1
+        lines.put(TOP, new Line(HORIZONTAL, grid[0][1], grid[0][2], color(255,255,255)));
+        lines.put(RIGHT, new Line(VERTICAL, grid[0][2], grid[1][2], color(255,255,255)));
+        lines.put(LEFT, squares[0].getLine(RIGHT));
+        lines.put(BOTTOM, new Line(HORIZONTAL, grid[1][1], grid[1][2], color(255,255,255)));
+        squares[squareNbr] = new Square(lines);
+      
         break;
       default:
         break;
     }    
   }    
    
-  void checkMouseOver(Player playerTurn) {
-    for(int i = 0; i < lines.length; i++) {
-      lines[i].checkMouseOver(playerTurn);
+  void checkLineAvailability(Player playerTurn) {
+    for(int i = 0; i < squares.length; i++) {
+      squares[i].checkLineAvailability(playerTurn);
     }
   }
   
-  void checkMousePressed(Player playerTurn) {
-    for(int i = 0; i < lines.length; i++) {
-      lines[i].checkMousePressed(playerTurn);
+  void makeMove(Player playerTurn) {
+    for(int i = 0; i < squares.length; i++) {
+      if( !squares[i].isOwned() )
+        squares[i].makeMove(playerTurn);
     }
   }
 
@@ -183,13 +188,13 @@ class DABGame {
   
   void play() {
     fill(0);
-    board.checkMouseOver(playerTurn);
+    board.checkLineAvailability(playerTurn);
     board.displayGrid();
     board.displaySquares();
   }
   
   void makeMove() {
-    board.checkMousePressed(playerTurn);    
+    board.makeMove(playerTurn);    
   }
 }  
   
@@ -220,14 +225,14 @@ class Line {
   float yPos;
   float lineLength;
   String direction;
-  boolean owner;
+  Player owner;
  
   Line(String theDirection, Dot theStartDot, Dot theEndDot, color theLineColor) {
     direction = theDirection;
     startDot = theStartDot;
     endDot = theEndDot;
     lineColor = theLineColor;
-    owner = false;
+    owner = null;
     if(direction == HORIZONTAL) {
       lineHeight = 5;
       lineLength = (endDot.getXPos() - startDot.getXPos()) - startDot.getSize();
@@ -241,27 +246,61 @@ class Line {
     }      
   }
   
-  void checkMouseOver(Player playerTurn) {
-    if(owner == true) return;
-    if (mouseX > xPos && mouseX < xPos+lineLength &&
-        mouseY > yPos-lineHeight && mouseY < yPos+lineHeight) {
-      lineColor = playerTurn.getColorCode();
+  float getXPos() {
+    return xPos;
+  }
+  
+  float getYPos() {
+    return yPos;  
+  }
+  
+  float getLineLength() {
+    return lineLength;
+  }
+  
+  float getLineHeight() {
+    return lineHeight;
+  } 
+   
+  
+  void checkLineAvailability(Player playerTurn) {
+    if(hasOwner()) return;
+      if(isSelected()) {
+        lineColor = playerTurn.getColorCode();
     } else {
       lineColor = color(255,255,255);  
     }
   }    
  
-  void checkMousePressed(Player playerTurn) {
-    if(owner == true) return;
-    if (mouseX > xPos && mouseX < xPos+lineLength &&
-        mouseY > yPos-lineHeight && mouseY < yPos+lineHeight) {
-      lineColor = playerTurn.getColorCode();
-      owner = true;
+  void makeMove(Player playerTurn) {
+    if(hasOwner()) return;
+    if(isSelected()) {
+      setOwner(playerTurn);
       game.nextPlayersTurn();
     } else {
       lineColor = color(255,255,255);  
     }
   }    
+  
+  void setOwner(Player playerTurn) {
+      lineColor = playerTurn.getColorCode();
+      owner = playerTurn;
+  }
+  
+  boolean isSelected() {
+    if (mouseX > xPos && mouseX < xPos+lineLength &&
+        mouseY > yPos-lineHeight && mouseY < yPos+lineHeight) 
+       return true;
+    else
+       return false; 
+  }
+  
+  boolean hasOwner() {
+    if(owner != null)
+      return true;
+    else
+      return false;  
+  }
 
   void drawLine() {
     fill(lineColor);
@@ -270,22 +309,84 @@ class Line {
 }
 
 class Square {
-  Line[] lines;
+  HashMap<String,Line> lines;
   Player owner;
+  float xPos;
+  float yPos;
+  float squareLength;
+  float squareHeight;
+  color fillColor;
   
-  Square(Line[] theLines) {
-    lines = new Line[theLines.length];
-    lines = theLines;  
+  Square(HashMap<String,Line> theLines) {
+    lines = theLines;
+    setDimensions();  
+  }
+  
+  Line getLine(String theKey) {
+    return lines.get(theKey);  
+  }
+  
+  void setDimensions() {
+    Line top = lines.get(TOP);
+    Line right = lines.get(RIGHT);
+    Line bottom = lines.get(BOTTOM);
+    xPos = top.getXPos();
+    yPos = top.getYPos() + top.getLineHeight();  
+    squareLength = top.getLineLength() + right.getLineLength() - 2.2;
+    squareHeight = bottom.getYPos() - top.getYPos() - bottom.getLineHeight();
   }
   
   void drawSquare() {
-    for(int i = 0; i < lines.length; i++) {
-      lines[i].drawLine();
+    for (Line ln: lines.values()){
+      ln.drawLine();  
     }
-  }    
+    if(isOwned())
+      fillSquare();
+  }  
+
+  void makeMove(Player playerTurn) {
+      for(Line ln: lines.values()) {
+        ln.makeMove(playerTurn);  
+        if(allLinesOwned()) {
+          setOwner(playerTurn);  
+        }      
+      }
+  } 
+ 
+  boolean allLinesOwned() {
+    boolean isOwned = true;
+      for(Line ln: lines.values()) {
+        if(ln.hasOwner())
+          continue;  
+        else {
+         isOwned = false;
+         break;  
+       }
+    } 
+    return isOwned; 
+  } 
+  
+  void checkLineAvailability(Player playerTurn) {
+      for(Line ln: lines.values()) {
+        ln.checkLineAvailability(playerTurn);
+      }
+  }
+  
+  boolean isOwned() {
+    if(owner != null)
+      return true;
+    else
+      return false;  
+  }
   
   void setOwner(Player theOwner) {
     owner = theOwner;  
+    fillColor = owner.getColorCode();
+  }
+  
+  void fillSquare() {
+    fill(fillColor);
+    rect(xPos, yPos, squareLength, squareHeight);   
   }
 }  
 
