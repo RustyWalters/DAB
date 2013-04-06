@@ -11,6 +11,8 @@ String TOP = "TOP";
 String BOTTOM = "BOTTOM";
 String LEFT = "LEFT";
 String RIGHT = "RIGHT";
+String PLAYER1 = "PLAYER1";
+String PLAYER2 = "PLAYER2";
 
 DABGame game;
 Player player1;
@@ -81,6 +83,17 @@ class Board {
     buildSquares();
   } 
   
+  int getScore(Player player) {
+    int score = 0;
+    for(int i = 0; i < squares.length; i++) {
+      if(squares[i].getOwner()==null)
+        break;
+      if(squares[i].getOwner().getID().equals(player.getID()))
+        score++;    
+    }  
+    return score;
+  }
+  
   void buildGrid() {
     grid = new Dot[gridSize][gridSize];
     for(int i = 0; i < gridSize; i++) {
@@ -92,7 +105,7 @@ class Board {
   }
   
   void buildSquares() {
-    squares = new Square[2];
+    squares = new Square[9];
     for(int i = 0; i < squares.length; i++) {
       buildSquare(i);
     }
@@ -121,7 +134,55 @@ class Board {
         lines.put(LEFT, squares[0].getLine(RIGHT));
         lines.put(BOTTOM, new Line(HORIZONTAL, grid[1][1], grid[1][2], color(255,255,255)));
         squares[squareNbr] = new Square(lines);
-      
+        break;
+      case 2:  //square 2
+        lines.put(TOP, new Line(HORIZONTAL, grid[0][2], grid[0][3], color(255,255,255)));
+        lines.put(RIGHT, new Line(VERTICAL, grid[0][3], grid[1][3], color(255,255,255)));
+        lines.put(LEFT, squares[1].getLine(RIGHT));
+        lines.put(BOTTOM, new Line(HORIZONTAL, grid[1][2], grid[1][3], color(255,255,255)));
+        squares[squareNbr] = new Square(lines);
+        break;
+      case 3:  //square 3
+        lines.put(TOP, squares[0].getLine(BOTTOM));
+        lines.put(RIGHT, new Line(VERTICAL, grid[1][1], grid[2][1], color(255,255,255)));
+        lines.put(LEFT, new Line(VERTICAL, grid[1][0], grid[2][0], color(255,255,255)));        
+        lines.put(BOTTOM, new Line(HORIZONTAL, grid[2][0], grid[2][1], color(255,255,255)));
+        squares[squareNbr] = new Square(lines);
+        break;
+      case 4:  //square 4
+        lines.put(TOP, squares[1].getLine(BOTTOM));
+        lines.put(RIGHT, new Line(VERTICAL, grid[1][2], grid[2][2], color(255,255,255)));
+        lines.put(LEFT, squares[3].getLine(RIGHT));
+        lines.put(BOTTOM, new Line(HORIZONTAL, grid[2][1], grid[2][2], color(255,255,255)));
+        squares[squareNbr] = new Square(lines);
+        break;
+      case 5:  //square 5
+        lines.put(TOP, squares[2].getLine(BOTTOM));
+        lines.put(RIGHT, new Line(VERTICAL, grid[1][3], grid[2][3], color(255,255,255)));
+        lines.put(LEFT, squares[4].getLine(RIGHT));
+        lines.put(BOTTOM, new Line(HORIZONTAL, grid[2][2], grid[2][3], color(255,255,255)));
+        squares[squareNbr] = new Square(lines);
+        break;
+      case 6:  //square 6
+        lines.put(TOP, squares[3].getLine(BOTTOM));
+        lines.put(RIGHT, new Line(VERTICAL, grid[2][1], grid[3][1], color(255,255,255)));
+        lines.put(LEFT, new Line(VERTICAL, grid[2][0], grid[3][0], color(255,255,255)));        
+        lines.put(BOTTOM, new Line(HORIZONTAL, grid[3][0], grid[3][1], color(255,255,255)));
+        squares[squareNbr] = new Square(lines);
+        break;
+      case 7:  //square 7
+        lines.put(TOP, squares[4].getLine(BOTTOM));
+        lines.put(RIGHT, new Line(VERTICAL, grid[2][2], grid[3][2], color(255,255,255)));
+        lines.put(LEFT, squares[6].getLine(RIGHT));
+        lines.put(BOTTOM, new Line(HORIZONTAL, grid[3][1], grid[3][2], color(255,255,255)));
+        squares[squareNbr] = new Square(lines);
+        break;
+      case 8:  //square 8
+        lines.put(TOP, squares[5].getLine(BOTTOM));
+        lines.put(RIGHT, new Line(VERTICAL, grid[2][3], grid[3][3], color(255,255,255)));
+        lines.put(LEFT, squares[7].getLine(RIGHT));
+        lines.put(BOTTOM, new Line(HORIZONTAL, grid[3][2], grid[3][3], color(255,255,255)));
+        squares[squareNbr] = new Square(lines);
         break;
       default:
         break;
@@ -161,8 +222,13 @@ class DABGame {
   Player player1;
   Player player2;
   Player playerTurn;  
+  boolean tookSquare;
+  boolean validMove;
+  
   DABGame(int boardSize) {
-    board = new Board(boardSize);  
+    board = new Board(boardSize);
+    tookSquare = false;  
+    validMove = false;
   }
 
   void setPlayer(int playerNbr, Player thePlayer) {
@@ -179,6 +245,15 @@ class DABGame {
     playerTurn = player1;
   }  
   
+  HashMap<String,Integer> getScores() {
+    HashMap<String,Integer> scores = new HashMap<String,Integer>();
+    int player1_score = board.getScore(player1);
+    int player2_score = board.getScore(player2);
+    scores.put(PLAYER1, new Integer(player1_score));
+    scores.put(PLAYER2, new Integer(player2_score));
+    return scores;
+  }
+
   void nextPlayersTurn() {
     if(playerTurn==player1)
        playerTurn = player2;
@@ -193,8 +268,44 @@ class DABGame {
     board.displaySquares();
   }
   
+  void displayScores() {
+    HashMap<String,Integer> scores = getScores();
+    System.out.println("Player1 score: " + scores.get(PLAYER1));  
+    System.out.println("Player2 score: " + scores.get(PLAYER2));
+  }
+  
   void makeMove() {
-    board.makeMove(playerTurn);    
+    board.makeMove(playerTurn);
+    determinePlayersTurn();   
+    displayScores();
+  }
+  
+  boolean playerTookSquare() {
+    return tookSquare;
+  }
+  
+  boolean isValidMove() {
+    return validMove;  
+  }
+  
+  void setValidMove(boolean flag) {
+    validMove = flag;
+  }
+  
+  void setTookSquare(boolean theFlag) {
+    tookSquare = theFlag;
+  }
+  
+  void determinePlayersTurn() {
+    if(isValidMove() && playerTookSquare()) {
+      setTookSquare(false);  //player gets to take another turn
+      setValidMove(false);
+    } else {
+      if(isValidMove()) {      
+        setValidMove(false);  //reset for the next move; otherwise same players turn
+        nextPlayersTurn();
+      }      
+    }  
   }
 }  
   
@@ -276,7 +387,7 @@ class Line {
     if(hasOwner()) return;
     if(isSelected()) {
       setOwner(playerTurn);
-      game.nextPlayersTurn();
+        game.setValidMove(true);
     } else {
       lineColor = color(255,255,255);  
     }
@@ -289,7 +400,7 @@ class Line {
   
   boolean isSelected() {
     if (mouseX > xPos && mouseX < xPos+lineLength &&
-        mouseY > yPos-lineHeight && mouseY < yPos+lineHeight) 
+        mouseY > yPos && mouseY < yPos+lineHeight)
        return true;
     else
        return false; 
@@ -349,6 +460,7 @@ class Square {
         ln.makeMove(playerTurn);  
         if(allLinesOwned()) {
           setOwner(playerTurn);  
+          game.setTookSquare(true);
         }      
       }
   } 
@@ -382,6 +494,10 @@ class Square {
   void setOwner(Player theOwner) {
     owner = theOwner;  
     fillColor = owner.getColorCode();
+  }
+  
+  Player getOwner() {
+    return owner;  
   }
   
   void fillSquare() {
