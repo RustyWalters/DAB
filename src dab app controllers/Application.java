@@ -4,19 +4,12 @@ import play.*;
 import play.mvc.*;
 
 import views.html.*;
-import models.*;
 
 public class Application extends Controller {
-//	static DABGame DABgame = new DABGame();
   
     public static Result index() {
-        return ok(index.render("Let's Play Dots and Boxes!"));
+        return ok(index.render("Let's Play Dots & Boxes!"));
     }
-    
-    public static Result playDAB() {
-    	return ok(game.render("Let's Play Dots and Boxes!"));
-    }
-    
     public static Result difficulty() {
         return ok(difficulty.render("Let's Play Dots & Boxes!"));
     }
@@ -31,6 +24,5 @@ public class Application extends Controller {
     }
     public static Result hard() {
         return ok(hard.render("Let's Play Dots & Boxes!"));
-    }    
-  
+    }
 }

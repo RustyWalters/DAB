@@ -1,0 +1,39 @@
+@(message: String)
+
+@main("Welcome to DAB") {
+    
+<!doctype html>
+    <html>
+      <head>
+        <script src="assets/javascripts/processing_min.js"></script>
+      <script type="text/javascript">
+ 		var bound = false;
+  
+        function bindJavascript() {
+          var pjs = Processing.getInstanceById('dabsketch');
+	      if(pjs!=null) {
+            pjs.bindJavascript(this);
+             bound = true; 
+          }
+          if(!bound) setTimeout(bindJavascript, 250);
+        }
+        bindJavascript();
+
+ 
+       function showScores(p1Score, p2Score) {
+         document.getElementById('player1_score').value = p1Score;
+         document.getElementById('player2_score').value = p2Score;
+       }
+       </script>        
+      </head>
+      <body>
+      	<center>
+		  <h1>@message</h1>
+		  <h2>Score:</h2>
+		  <h3>Player1: <input type="textfield" id="player1_score" disabled size="2"> Player2: <input type="textfield" id="player2_score" disabled size="2"></h3>
+          <canvas id="dabsketch" data-processing-sources="assets/javascripts/dab/dab.pde assets/javascripts/dab/Dot.pde assets/javascripts/dab/Board.pde assets/javascripts/dab/DABGame.pde
+                 assets/javascripts/dab/Player.pde assets/javascripts/dab/Line.pde assets/javascripts/dab/Square.pde"></canvas>
+        </center>
+      </body>
+    </html>
+}

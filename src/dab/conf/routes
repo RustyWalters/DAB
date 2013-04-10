@@ -4,6 +4,12 @@
 
 # Home page
 GET     /                           controllers.Application.index()
+GET		/PlayDAB					controllers.Application.playDAB()
+GET		/difficulty					controllers.Application.difficulty()
+GET		/rules						controllers.Application.rules()
+GET		/pvp						controllers.Application.pvp()
+GET		/easy						controllers.Application.easy()
+GET		/hard						controllers.Application.hard()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

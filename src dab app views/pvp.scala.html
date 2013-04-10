@@ -1,0 +1,17 @@
+@(message: String)
+
+@main("Welcome to DAB") {
+    
+<!doctype html>
+    <html>
+      <head>
+        <script src="assets/javascripts/processing_min.js"></script>
+      </head>
+      <body>
+      	<center>
+		  <h1>@message</h1>
+          <canvas data-processing-sources="assets/javascripts/dab.pde"></canvas>
+        </center>
+      </body>
+    </html>
+}

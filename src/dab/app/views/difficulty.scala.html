@@ -4,8 +4,6 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<script type="text/javascript" src="assets/javascripts/processing.js"></script>
-<script type="text/javascript" src="assets/javascripts/init.js"></script>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Untitled Document</title>
@@ -91,131 +89,22 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 <div class="container">
   <div class="content">
-    <table width="965" height="443" border="0" align="center" cellpadding="10" cellspacing="10">
-      <tr>
-        <td width="275" height="56">&nbsp;</td>
-        <td width="325"><div align="center">
-          <script type="application/processing"> 
-			int numBalls = 12;
-			float spring = 0.05;
-			float gravity = 0.03;
-			float friction = -0.9;
-			Ball[] balls = new Ball[numBalls];
-			
-			char letter;
-			String words = "Let's Play Dots & Boxes!";
-			
-			void setup() {
-			  size(320, 180);
-			  textFont(createFont("Georgia", 36));
-			  for (int i = 0; i < numBalls; i++) {
-				balls[i] = new Ball(random(width), random(height), random(20, 50), i, balls);
-			  }
-			  noStroke();
-			  fill(255, 204);
-			}
-
-            void draw() {
-			  background(0);
-			  textSize(18);
-			  text(words, 60, 10, 540, 300);
-			  for (int i = 0; i < numBalls; i++) {
-				balls[i].collide();
-				balls[i].move();
-				balls[i].display();  
-			  }
-			}
-            
-            class Ball {
-              
-              float x, y;
-              float diameter;
-              float vx = 0;
-              float vy = 0;
-              int id;
-              Ball[] others;
-             
-              Ball(float xin, float yin, float din, int idin, Ball[] oin) {
-                x = xin;
-                y = yin;
-                diameter = din;
-                id = idin;
-                others = oin;
-              } 
-              
-              void collide() {
-                for (int i = id + 1; i < numBalls; i++) {
-                  float dx = others[i].x - x;
-                  float dy = others[i].y - y;
-                  float distance = sqrt(dx*dx + dy*dy);
-                  float minDist = others[i].diameter/2 + diameter/2;
-                  if (distance < minDist) { 
-                    float angle = atan2(dy, dx);
-                    float targetX = x + cos(angle) * minDist;
-                    float targetY = y + sin(angle) * minDist;
-                    float ax = (targetX - others[i].x) * spring;
-                    float ay = (targetY - others[i].y) * spring;
-                    vx -= ax;
-                    vy -= ay;
-                    others[i].vx += ax;
-                    others[i].vy += ay;
-                  }
-                }   
-              }
-              
-              void move() {
-                vy += gravity;
-                x += vx;
-                y += vy;
-                if (x + diameter/2 > width) {
-                  x = width - diameter/2;
-                  vx *= friction; 
-                }
-                else if (x - diameter/2 < 0) {
-                  x = diameter/2;
-                  vx *= friction;
-                }
-                if (y + diameter/2 > height) {
-                  y = height - diameter/2;
-                  vy *= friction; 
-                } 
-                else if (y - diameter/2 < 0) {
-                  y = diameter/2;
-                  vy *= friction;
-                }
-              }
-              
-              void display() {
-                ellipse(x, y, diameter, diameter);
-              }
-            }
-            </script><canvas></canvas>
-        </td>
-        <td width="265">&nbsp;</td>
-      </tr>
-      <tr>
-        <td><div align="center">
-          <p><img src="../../assets/images/computer.jpg" width="216" height="230" alt="Computer" /></p>
-        </div></td>
-        <td><div align="center"><img src="../../assets/images/2player.png" alt="TwoPlayer" width="214" height="142" align="middle" /></div></td>
-        <td><div align="center"><img src="../../assets/images/rules-for-all.gif" width="215" height="215" alt="Rules" /></div></td>
-      </tr>
-      <tr>
-        <td><div align="center">
-          <h2><a href="difficulty">Player vs. Computer</a></h2>
-        </div></td>
-        <td><div align="center">
-          <h2><a href="PlayDAB">Player vs. Player</a></h2>
-        </div></td>
-        <td><div align="center">
-          <h2><a href="rules">Game Rules</a></h2>
-        </div></td>
-      </tr>
-    </table>
-    <h1>&nbsp;</h1>
-    <!-- end .content --></div>
+    <h1 align="center">Select Difficulty</h1>
+    <div align="center">
+      <table width="300" border="1">
+        <tr>
+          <td width="150"><div align="center">
+            <h3><a href="easy">Easy</a></h3>
+          </div></td>
+          <td width="134"><div align="center">
+            <h3><a href="hard">Hard</a></h3>
+          </div></td>
+        </tr>
+      </table>
+    </div>
+    <p>&nbsp;</p>
+  <!-- end .content --></div>
   <!-- end .container --></div>
-  
 </body>
 </html>
 }
