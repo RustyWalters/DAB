@@ -18,7 +18,7 @@ class Board {
     int score = 0;
     for(int i = 0; i < squares.length; i++) {
       if(squares[i].getOwner()==null)
-        break;
+        continue;
       if(squares[i].getOwner().getID().equals(player.getID()))
         score++;    
     }  
@@ -40,13 +40,6 @@ class Board {
     for(int i = 0; i < squares.length; i++) {
       buildSquare(i);
     }
-//    squares[1] = buildSquare(2);
-
-    //square 2
-    
-//    lines[4] = new Line(HORIZONTAL, grid[0][1], grid[0][2], color(255,255,255));
-//    lines[5] = new Line(HORIZONTAL, grid[1][1], grid[1][2], color(255,255,255));
-//    lines[6] = new Line(VERTICAL, grid[0][2], grid[1][2], color(255,255,255));
   }
   
   void buildSquare(int squareNbr) {

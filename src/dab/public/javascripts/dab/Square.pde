@@ -37,11 +37,11 @@ class Square {
   void makeMove(Player playerTurn) {
       for(Line ln: lines.values()) {
         ln.makeMove(playerTurn);  
-        if(allLinesOwned()) {
-          setOwner(playerTurn);  
-          game.setTookSquare(true);
-        }      
       }
+      if(allLinesOwned()) {
+        setOwner(playerTurn);  
+        game.setTookSquare(true);
+      }      
   } 
  
   boolean allLinesOwned() {

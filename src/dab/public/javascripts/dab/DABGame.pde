@@ -53,7 +53,6 @@ class DABGame {
     board.checkLineAvailability(playerTurn);
     board.displayGrid();
     board.displaySquares();
-    displayScores();
   }
   
   void displayScores() {
@@ -69,7 +68,7 @@ class DABGame {
   void makeMove() {
     board.makeMove(playerTurn);
     determinePlayersTurn();   
-//    displayScores();
+    displayScores();
   }
   
   boolean playerTookSquare() {
