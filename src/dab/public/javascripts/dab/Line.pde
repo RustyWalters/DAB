@@ -28,6 +28,10 @@ class Line {
     }      
   }
   
+  void setLineColor(color theColor) {
+    lineColor = theColor;
+  }
+  
   float getXPos() {
     return xPos;
   }
@@ -54,6 +58,7 @@ class Line {
     }
   }    
  
+/*
   void makeMove(Player playerTurn) {
     if(hasOwner()) return;
     if(isSelected()) {
@@ -63,7 +68,7 @@ class Line {
       lineColor = color(255,255,255);  
     }
   }    
-  
+*/  
   void setOwner(Player playerTurn) {
       lineColor = playerTurn.getColorCode();
       owner = playerTurn;

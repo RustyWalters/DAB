@@ -12,6 +12,10 @@ class Square {
     setDimensions();  
   }
   
+  HashMap<String,Line> getLines() {
+    return lines;  
+  }
+  
   Line getLine(String theKey) {
     return lines.get(theKey);  
   }
@@ -34,6 +38,7 @@ class Square {
       fillSquare();
   }  
 
+/*
   void makeMove(Player playerTurn) {
       for(Line ln: lines.values()) {
         ln.makeMove(playerTurn);  
@@ -43,7 +48,20 @@ class Square {
         game.setTookSquare(true);
       }      
   } 
- 
+*/ 
+
+  int getNbrLinesAvailable() {
+    int avalLineCount = 0;
+    for(Line ln: lines.values()) {
+      if(ln.hasOwner())
+        continue;
+      else {
+        avalLineCount++;
+      }
+    }
+    return avalLineCount;
+  }
+
   boolean allLinesOwned() {
     boolean isOwned = true;
       for(Line ln: lines.values()) {

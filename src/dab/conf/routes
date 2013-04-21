@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index()
-GET		/PlayDAB					controllers.Application.playDAB()
+GET		/PlayDAB					controllers.Application.playDAB(mode:Int)
 GET		/difficulty					controllers.Application.difficulty()
 GET		/rules						controllers.Application.rules()
 GET		/pvp						controllers.Application.pvp()

@@ -111,7 +111,11 @@ class Board {
       default:
         break;
     }    
-  }    
+  } 
+
+  Square[] getSquares() {
+    return squares;
+  }  
    
   void checkLineAvailability(Player playerTurn) {
     for(int i = 0; i < squares.length; i++) {
@@ -119,13 +123,27 @@ class Board {
     }
   }
   
+  boolean isSquaresTaken() {
+    boolean isTaken = true;
+    for(int i = 0; i < squares.length; i++) {
+      if(squares[i].isOwned()) {
+        continue;
+      } else {
+        isTaken = false;
+        break;
+      }  
+    }
+    return isTaken;
+  }
+  
+/*  
   void makeMove(Player playerTurn) {
     for(int i = 0; i < squares.length; i++) {
       if( !squares[i].isOwned() )
         squares[i].makeMove(playerTurn);
     }
   }
-
+*/
   void displayGrid() {
     for(int i = 0; i < gridSize; i++) {
       for(int j = 0; j < gridSize; j++) {

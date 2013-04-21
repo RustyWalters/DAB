@@ -13,8 +13,8 @@ public class Application extends Controller {
         return ok(index.render("Let's Play Dots and Boxes!"));
     }
     
-    public static Result playDAB() {
-    	return ok(game.render("Let's Play Dots and Boxes!"));
+    public static Result playDAB(int mode) {
+    	return ok(game.render("Let's Play Dots and Boxes!", mode));
     }
     
     public static Result difficulty() {

@@ -1,4 +1,4 @@
-@(message: String)
+@(message: String, mode: Int)
 
 @main("Welcome to DAB") {
     
@@ -8,7 +8,7 @@
         <script src="assets/javascripts/processing_min.js"></script>
       <script type="text/javascript">
  		var bound = false;
-  
+        
         function bindJavascript() {
           var pjs = Processing.getInstanceById('dabsketch');
 	      if(pjs!=null) {
@@ -19,11 +19,25 @@
         }
         bindJavascript();
 
- 
-       function showScores(p1Score, p2Score) {
+       function getMode() {
+    	   return @mode;
+       }     
+       
+ 	   function showScores(p1Score, p2Score) {
          document.getElementById('player1_score').value = p1Score;
          document.getElementById('player2_score').value = p2Score;
        }
+       
+       function gameOver(p1, p2) {
+    	   var result = window.confirm("Game Over!\n" + "Player1:  " + p1 + "   Player2:  " + p2 + "\nPress Ok to play again or Cancel to quit.")
+    	   if(result == true) {
+    		   window.location.href=("/");
+    	   } else {
+    		   window.open('', '_self', ''); 
+    		   window.close();
+    	   }
+
+		}
        </script>        
       </head>
       <body>
@@ -33,7 +47,8 @@
 		  <h3>Player1: <input type="textfield" id="player1_score" disabled size="2"> Player2: <input type="textfield" id="player2_score" disabled size="2"></h3>
           <p>
             <canvas id="dabsketch" data-processing-sources="assets/javascripts/dab/dab.pde assets/javascripts/dab/Dot.pde assets/javascripts/dab/Board.pde assets/javascripts/dab/DABGame.pde
-                 assets/javascripts/dab/Player.pde assets/javascripts/dab/Line.pde assets/javascripts/dab/Square.pde"></canvas>
+                 assets/javascripts/dab/Player.pde assets/javascripts/dab/Line.pde assets/javascripts/dab/Square.pde assets/javascripts/dab/DABStrategy.pde 
+                 assets/javascripts/dab/DABHumanStrategy.pde assets/javascripts/dab/DABComputerEasyStrategy.pde assets/javascripts/dab/DABComputerMediumStrategy.pde"></canvas>
           </p>
             <form action="/"> <input type="submit" value="Restart">
           </form>
