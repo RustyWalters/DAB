@@ -1,4 +1,11 @@
+bin/
+data/
+db/
+dist/
 logs
+test-result/
+lib/
+modules/
 project/project
 project/target
 target
